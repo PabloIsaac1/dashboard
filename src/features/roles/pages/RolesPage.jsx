@@ -7,7 +7,8 @@ import SearchBar from "../../../shared/components/UI/SearchBar"
 import Pagination from "../../../shared/components/UI/Pagination"
 import RoleCard from "../components/RoleCard"
 import RoleModal from "../components/RoleModal"
-import { useToast } from "../../../shared/hooks/useToast"
+import { useEnhancedToast } from "../../../shared/hooks/useEnhancedToast"
+import { ConfirmDialog } from "../../../shared/components/UI/ConfirmDialog"
 
 const RolesPage = () => {
   const [roles, setRoles] = useState([
@@ -57,7 +58,8 @@ const RolesPage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [selectedRole, setSelectedRole] = useState(null)
-  const { success, error } = useToast()
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, role: null })
+  const { success, error } = useEnhancedToast()
 
   const itemsPerPage = 6
 
@@ -94,9 +96,17 @@ const RolesPage = () => {
       return
     }
 
-    if (window.confirm(`¿Estás seguro de que deseas eliminar el rol "${role.name}"?`)) {
-      setRoles((prev) => prev.filter((r) => r.id !== role.id))
-      success("Rol eliminado exitosamente")
+    setConfirmDialog({
+      isOpen: true,
+      role,
+    })
+  }
+
+  const confirmDeleteRole = () => {
+    if (confirmDialog.role) {
+      setRoles((prev) => prev.filter((r) => r.id !== confirmDialog.role.id))
+      success(`Rol "${confirmDialog.role.name}" eliminado exitosamente`)
+      setConfirmDialog({ isOpen: false, role: null })
     }
   }
 
@@ -140,18 +150,39 @@ const RolesPage = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-card p-4 rounded-lg border border-border">
-          <div className="text-2xl font-bold text-card-foreground">{stats.totalRoles}</div>
-          <div className="text-sm text-muted-foreground">Total de Roles</div>
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-blue-100 rounded-full">
+              <span className="text-2xl">👥</span>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-blue-600">{stats.totalRoles}</div>
+              <div className="text-sm text-gray-600">Total de Roles</div>
+            </div>
+          </div>
         </div>
         <div className="bg-card p-4 rounded-lg border border-border">
-          <div className="text-2xl font-bold text-card-foreground">{stats.customRoles}</div>
-          <div className="text-sm text-muted-foreground">Roles Personalizados</div>
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-green-100 rounded-full">
+              <span className="text-2xl">⚙️</span>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-green-600">{stats.customRoles}</div>
+              <div className="text-sm text-gray-600">Roles Personalizados</div>
+            </div>
+          </div>
         </div>
         <div className="bg-card p-4 rounded-lg border border-border">
-          <div className="text-2xl font-bold text-card-foreground">{stats.avgPermissions}</div>
-          <div className="text-sm text-muted-foreground">Permisos Promedio</div>
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-purple-100 rounded-full">
+              <span className="text-2xl">🔐</span>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-purple-600">{stats.avgPermissions}</div>
+              <div className="text-sm text-gray-600">Permisos Promedio</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -218,6 +249,18 @@ const RolesPage = () => {
         role={selectedRole}
         onSave={handleEditRole}
         mode="edit"
+      />
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={() => setConfirmDialog({ isOpen: false, role: null })}
+        onConfirm={confirmDeleteRole}
+        title="🗑️ ¿Eliminar Rol?"
+        message={`¿Estás seguro de que deseas eliminar el rol "${confirmDialog.role?.name}"? Esta acción no se puede deshacer.`}
+        type="delete"
+        confirmText="Sí, Eliminar"
+        cancelText="Cancelar"
       />
     </div>
   )
