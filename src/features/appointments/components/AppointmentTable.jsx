@@ -30,74 +30,86 @@ const AppointmentTable = ({ appointments, properties, onView, onEdit, onDelete }
 
   if (appointments.length === 0) {
     return (
-      <div className="text-center py-12 bg-card rounded-lg border border-border">
-        <div className="text-muted-foreground mb-4">No hay citas programadas</div>
+      <div className="text-center py-16 bg-white rounded-2xl border border-gray-200 shadow-lg">
+        <div className="text-6xl mb-4">📅</div>
+        <div className="text-gray-500 text-lg mb-2">No hay citas programadas</div>
+        <div className="text-gray-400">¡Programa tu primera cita!</div>
       </div>
     )
   }
 
   return (
-    <div className="bg-card rounded-lg border border-border overflow-hidden">
+    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xl">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="bg-muted/50">
-              <TableHead className="font-semibold">Cliente</TableHead>
-              <TableHead className="font-semibold">Contacto</TableHead>
-              <TableHead className="font-semibold">Fecha</TableHead>
-              <TableHead className="font-semibold">Hora</TableHead>
-              <TableHead className="font-semibold">Propiedad</TableHead>
-              <TableHead className="font-semibold">Estado</TableHead>
-              <TableHead className="font-semibold text-center">Acciones</TableHead>
+            <TableRow className="bg-gradient-to-r from-blue-50 to-indigo-50">
+              <TableHead className="font-bold text-gray-700">👤 Cliente</TableHead>
+              <TableHead className="font-bold text-gray-700">📞 Contacto</TableHead>
+              <TableHead className="font-bold text-gray-700">📅 Fecha</TableHead>
+              <TableHead className="font-bold text-gray-700">⏰ Hora</TableHead>
+              <TableHead className="font-bold text-gray-700">🏠 Propiedad</TableHead>
+              <TableHead className="font-bold text-gray-700">📊 Estado</TableHead>
+              <TableHead className="font-bold text-gray-700 text-center">⚙️ Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {appointments.map((appointment) => (
-              <TableRow key={appointment.id} className="hover:bg-muted/30 transition-colors">
+              <TableRow key={appointment.id} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200 border-b border-gray-100">
                 <TableCell>
-                  <div className="font-medium text-card-foreground">{appointment.clientName}</div>
+                  <div className="font-semibold text-gray-800 flex items-center gap-2">
+                    <span className="text-lg">👤</span>
+                    {appointment.clientName}
+                  </div>
                 </TableCell>
 
                 <TableCell>
                   <div className="space-y-1">
-                    <div className="flex items-center space-x-2 text-sm">
-                      <Phone className="h-3 w-3 text-muted-foreground" />
-                      <span>{appointment.clientPhone}</span>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <span>📱</span>
+                      <span className="font-medium">{appointment.clientPhone}</span>
                     </div>
-                    <div className="flex items-center space-x-2 text-sm">
-                      <Mail className="h-3 w-3 text-muted-foreground" />
-                      <span className="truncate max-w-[150px]">{appointment.clientEmail}</span>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <span>📧</span>
+                      <span className="truncate max-w-[150px] font-medium">{appointment.clientEmail}</span>
                     </div>
                   </div>
                 </TableCell>
 
                 <TableCell>
-                  <span className="text-sm font-medium">{formatDate(appointment.date)}</span>
-                </TableCell>
-
-                <TableCell>
-                  <span className="text-sm font-medium">{appointment.time}</span>
-                </TableCell>
-
-                <TableCell>
-                  <div className="max-w-[200px]">
-                    <span className="text-sm truncate block">{getPropertyTitle(appointment.propertyId)}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">📅</span>
+                    <span className="text-sm font-semibold text-gray-700">{formatDate(appointment.date)}</span>
                   </div>
                 </TableCell>
 
                 <TableCell>
-                  <Badge className={getStatusColor(appointment.status)}>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">⏰</span>
+                    <span className="text-sm font-semibold text-gray-700">{appointment.time}</span>
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <div className="max-w-[200px] flex items-center gap-2">
+                    <span className="text-lg">🏠</span>
+                    <span className="text-sm truncate block font-medium text-gray-700">{getPropertyTitle(appointment.propertyId)}</span>
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <Badge className={`${getStatusColor(appointment.status)} font-semibold px-3 py-1 rounded-full`}>
                     {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
                   </Badge>
                 </TableCell>
 
                 <TableCell>
-                  <div className="flex items-center justify-center space-x-1">
+                  <div className="flex items-center justify-center space-x-2">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => onView(appointment)}
-                      className="text-muted-foreground hover:text-accent"
+                      className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg p-2"
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
@@ -105,7 +117,7 @@ const AppointmentTable = ({ appointments, properties, onView, onEdit, onDelete }
                       variant="ghost"
                       size="sm"
                       onClick={() => onEdit(appointment)}
-                      className="text-muted-foreground hover:text-secondary"
+                      className="text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg p-2"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -113,7 +125,7 @@ const AppointmentTable = ({ appointments, properties, onView, onEdit, onDelete }
                       variant="ghost"
                       size="sm"
                       onClick={() => onDelete(appointment)}
-                      className="text-muted-foreground hover:text-destructive"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg p-2"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
