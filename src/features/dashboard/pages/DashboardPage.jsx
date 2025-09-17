@@ -6,9 +6,14 @@ const DashboardPage = () => {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-primary to-secondary p-6 rounded-lg animate-fade-in">
-        <h1 className="text-2xl font-bold mb-2 text-primary-foreground">¡Bienvenido de vuelta!</h1>
-        <p className="text-primary-foreground/90">Aquí tienes un resumen de tu actividad inmobiliaria</p>
+      <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 p-8 rounded-2xl animate-fade-in shadow-xl">
+        <div className="flex items-center gap-4">
+          <div className="text-6xl">👋</div>
+          <div>
+            <h1 className="text-3xl font-bold mb-2 text-white">¡Bienvenido de vuelta!</h1>
+            <p className="text-white/90 text-lg">Aquí tienes un resumen de tu actividad inmobiliaria 🏠</p>
+          </div>
+        </div>
       </div>
 
       {/* Stats Cards */}
