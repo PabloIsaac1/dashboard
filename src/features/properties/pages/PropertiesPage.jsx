@@ -8,7 +8,8 @@ import Pagination from "../../../shared/components/UI/Pagination"
 import PropertyCard from "../components/PropertyCard"
 import PropertyModal from "../components/PropertyModal"
 import PropertyViewModal from "../components/PropertyViewModal"
-import { useToast } from "../../../shared/hooks/useToast"
+import { useEnhancedToast } from "../../../shared/hooks/useEnhancedToast"
+import { ConfirmDialog } from "../../../shared/components/UI/ConfirmDialog"
 
 const PropertiesPage = () => {
   const [properties, setProperties] = useState([
@@ -65,7 +66,8 @@ const PropertiesPage = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
   const [selectedProperty, setSelectedProperty] = useState(null)
-  const { success, error } = useToast()
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, property: null })
+  const { success, error } = useEnhancedToast()
 
   const itemsPerPage = 6
 
@@ -98,9 +100,17 @@ const PropertiesPage = () => {
   }
 
   const handleDeleteProperty = (property) => {
-    if (window.confirm(`¿Estás seguro de que deseas eliminar "${property.title}"?`)) {
-      setProperties((prev) => prev.filter((p) => p.id !== property.id))
-      success("Propiedad eliminada exitosamente")
+    setConfirmDialog({
+      isOpen: true,
+      property,
+    })
+  }
+
+  const confirmDeleteProperty = () => {
+    if (confirmDialog.property) {
+      setProperties((prev) => prev.filter((p) => p.id !== confirmDialog.property.id))
+      success(`Propiedad "${confirmDialog.property.title}" eliminada exitosamente`)
+      setConfirmDialog({ isOpen: false, property: null })
     }
   }
 
@@ -119,12 +129,17 @@ const PropertiesPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Gestión de Inmuebles</h1>
-          <p className="text-muted-foreground">Administra tu portafolio de propiedades</p>
+          <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
+            🏠 Gestión de Inmuebles
+          </h1>
+          <p className="text-gray-600">Administra tu portafolio de propiedades</p>
         </div>
-        <Button onClick={() => setIsCreateModalOpen(true)} className="flex items-center space-x-2">
+        <Button 
+          onClick={() => setIsCreateModalOpen(true)} 
+          className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+        >
           <Plus className="h-5 w-5" />
-          <span>Nueva Propiedad</span>
+          <span>🏡 Nueva Propiedad</span>
         </Button>
       </div>
 
@@ -200,6 +215,18 @@ const PropertiesPage = () => {
           setSelectedProperty(null)
         }}
         property={selectedProperty}
+      />
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={() => setConfirmDialog({ isOpen: false, property: null })}
+        onConfirm={confirmDeleteProperty}
+        title="🗑️ ¿Eliminar Propiedad?"
+        message={`¿Estás seguro de que deseas eliminar "${confirmDialog.property?.title}"? Esta acción no se puede deshacer.`}
+        type="delete"
+        confirmText="Sí, Eliminar"
+        cancelText="Cancelar"
       />
     </div>
   )

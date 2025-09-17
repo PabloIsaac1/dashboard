@@ -7,7 +7,8 @@ import SearchBar from "../../../shared/components/UI/SearchBar"
 import Pagination from "../../../shared/components/UI/Pagination"
 import AppointmentTable from "../components/AppointmentTable"
 import AppointmentModal from "../components/AppointmentModal"
-import { useToast } from "../../../shared/hooks/useToast"
+import { useEnhancedToast } from "../../../shared/hooks/useEnhancedToast"
+import { ConfirmDialog } from "../../../shared/components/UI/ConfirmDialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const AppointmentsPage = () => {
@@ -75,7 +76,8 @@ const AppointmentsPage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [selectedAppointment, setSelectedAppointment] = useState(null)
-  const { success, error } = useToast()
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, appointment: null })
+  const { success, error } = useEnhancedToast()
 
   const itemsPerPage = 10
 
@@ -112,9 +114,17 @@ const AppointmentsPage = () => {
   }
 
   const handleDeleteAppointment = (appointment) => {
-    if (window.confirm(`¿Estás seguro de que deseas eliminar la cita con ${appointment.clientName}?`)) {
-      setAppointments((prev) => prev.filter((a) => a.id !== appointment.id))
-      success("Cita eliminada exitosamente")
+    setConfirmDialog({
+      isOpen: true,
+      appointment,
+    })
+  }
+
+  const confirmDeleteAppointment = () => {
+    if (confirmDialog.appointment) {
+      setAppointments((prev) => prev.filter((a) => a.id !== confirmDialog.appointment.id))
+      success(`Cita con ${confirmDialog.appointment.clientName} eliminada exitosamente`)
+      setConfirmDialog({ isOpen: false, appointment: null })
     }
   }
 
@@ -135,12 +145,17 @@ const AppointmentsPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Gestión de Citas</h1>
-          <p className="text-muted-foreground">Programa y administra las visitas a propiedades</p>
+          <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
+            📅 Gestión de Citas
+          </h1>
+          <p className="text-gray-600">Programa y administra las visitas a propiedades</p>
         </div>
-        <Button onClick={() => setIsCreateModalOpen(true)} className="flex items-center space-x-2">
+        <Button 
+          onClick={() => setIsCreateModalOpen(true)} 
+          className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+        >
           <Plus className="h-5 w-5" />
-          <span>Nueva Cita</span>
+          <span>📝 Nueva Cita</span>
         </Button>
       </div>
 
@@ -172,28 +187,41 @@ const AppointmentsPage = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: "Total Citas", value: appointments.length, color: "text-blue-600" },
+          { label: "Total Citas", value: appointments.length, color: "text-blue-600", emoji: "📊", bg: "bg-blue-100" },
           {
             label: "Programadas",
             value: appointments.filter((a) => a.status === "programada").length,
             color: "text-orange-600",
+            emoji: "⏰",
+            bg: "bg-orange-100"
           },
           {
             label: "Confirmadas",
             value: appointments.filter((a) => a.status === "confirmada").length,
             color: "text-green-600",
+            emoji: "✅",
+            bg: "bg-green-100"
           },
           {
             label: "Completadas",
             value: appointments.filter((a) => a.status === "completada").length,
             color: "text-gray-600",
+            emoji: "🎯",
+            bg: "bg-gray-100"
           },
         ].map((stat, index) => (
           <div key={index} className="bg-card p-4 rounded-lg border border-border">
-            <div className="text-2xl font-bold text-card-foreground">{stat.value}</div>
-            <div className="text-sm text-muted-foreground">{stat.label}</div>
+            <div className="flex items-center gap-3">
+              <div className={`p-3 ${stat.bg} rounded-full`}>
+                <span className="text-2xl">{stat.emoji}</span>
+              </div>
+              <div>
+                <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
+                <div className="text-sm text-gray-600">{stat.label}</div>
+              </div>
+            </div>
           </div>
         ))}
       </div>
@@ -254,6 +282,18 @@ const AppointmentsPage = () => {
         mode="edit"
         properties={properties}
         appointments={appointments}
+      />
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={() => setConfirmDialog({ isOpen: false, appointment: null })}
+        onConfirm={confirmDeleteAppointment}
+        title="🗑️ ¿Eliminar Cita?"
+        message={`¿Estás seguro de que deseas eliminar la cita con ${confirmDialog.appointment?.clientName}? Esta acción no se puede deshacer.`}
+        type="delete"
+        confirmText="Sí, Eliminar"
+        cancelText="Cancelar"
       />
     </div>
   )
