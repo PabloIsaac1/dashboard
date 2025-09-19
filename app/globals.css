@@ -121,7 +121,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gradient-to-br from-blue-50/30 via-indigo-50/30 to-purple-50/30 text-foreground;
   }
 }
 
@@ -158,4 +158,22 @@
   background-image: radial-gradient(circle at 25px 25px, rgba(99, 102, 241, 0.05) 2px, transparent 0),
     radial-gradient(circle at 75px 75px, rgba(99, 102, 241, 0.05) 2px, transparent 0);
   background-size: 100px 100px;
+}
+
+/* Enhanced hover effects */
+.hover-lift {
+  transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

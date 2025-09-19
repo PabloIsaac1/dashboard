@@ -53,7 +53,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="flex h-screen bg-gradient-to-br from-blue-50/50 via-indigo-50/50 to-purple-50/50">
       <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
 
       <main className="flex-1 overflow-auto">
