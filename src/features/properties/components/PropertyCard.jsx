@@ -34,7 +34,7 @@ const PropertyCard = ({ property, onView, onEdit, onDelete }) => {
   const TypeIcon = getPropertyTypeIcon(property.type)
 
   return (
-    <Card className="group hover:shadow-2xl hover:scale-105 transition-all duration-300 animate-fade-in overflow-hidden bg-white border-0 shadow-lg">
+    <Card className="group hover:shadow-2xl hover:scale-105 transition-all duration-300 animate-fade-in overflow-hidden bg-white border border-gray-200 shadow-lg">
       {/* Image */}
       <div className="relative h-48 overflow-hidden">
         {!imageError && property.image ? (
@@ -52,19 +52,14 @@ const PropertyCard = ({ property, onView, onEdit, onDelete }) => {
 
         {/* Status Badge */}
         <div className="absolute top-3 left-3">
-          <Badge className={`${getStatusColor(property.status)} font-bold px-3 py-1 rounded-full shadow-lg`}>
-            {property.status === 'venta' ? '💰 VENTA' : 
-             property.status === 'arriendo' ? '🏠 ARRIENDO' : 
-             property.status === 'vendido' ? '✅ VENDIDO' : 
-             '🔒 ARRENDADO'}
-          </Badge>
+          <Badge className={getStatusColor(property.status)}>{property.status.toUpperCase()}</Badge>
         </div>
 
         {/* Price */}
-        <div className="absolute top-3 right-3 bg-gradient-to-r from-black/80 to-gray-800/80 text-white px-4 py-2 rounded-full shadow-lg backdrop-blur-sm">
+        <div className="absolute top-3 right-3 bg-gradient-to-r from-black/70 to-gray-800/70 text-white px-4 py-2 rounded-2xl shadow-lg backdrop-blur-sm border border-white/20">
           <div className="flex items-center space-x-1">
-            <span className="text-lg">💰</span>
-            <span className="font-bold text-sm">
+            <DollarSign className="h-4 w-4" />
+            <span className="font-semibold">
               {new Intl.NumberFormat("es-CO", {
                 style: "currency",
                 currency: "COP",
@@ -77,62 +72,62 @@ const PropertyCard = ({ property, onView, onEdit, onDelete }) => {
 
       <CardContent className="p-4">
         {/* Title */}
-        <h3 className="font-bold text-lg text-gray-800 mb-2 line-clamp-1 flex items-center gap-2">
-          <TypeIcon className="h-5 w-5 text-blue-600" />
+        <h3 className="font-bold text-lg text-gray-700 mb-2 line-clamp-1 flex items-center gap-2">
+          <TypeIcon className="h-5 w-5" />
           {property.title}
         </h3>
 
         {/* Location */}
-        <div className="flex items-center text-gray-600 mb-3">
-          <span className="text-lg mr-2">📍</span>
-          <span className="text-sm line-clamp-1 font-medium">{property.address}</span>
+        <div className="flex items-center text-gray-500 mb-3">
+          <MapPin className="h-4 w-4 mr-1" />
+          <span className="text-sm line-clamp-1">{property.address}</span>
         </div>
 
         {/* Features */}
-        <div className="flex items-center justify-between mb-4 text-sm text-gray-600">
+        <div className="flex items-center justify-between mb-4 text-sm text-gray-500">
           <div className="flex items-center space-x-4">
             {property.bedrooms && (
-              <div className="flex items-center space-x-1 bg-blue-50 px-2 py-1 rounded-lg">
-                <span className="text-base">🛏️</span>
-                <span className="font-semibold text-blue-700">{property.bedrooms}</span>
+              <div className="flex items-center space-x-1 bg-blue-50 px-2 py-1 rounded-lg border border-blue-200">
+                <Bed className="h-4 w-4" />
+                <span>{property.bedrooms}</span>
               </div>
             )}
             {property.bathrooms && (
-              <div className="flex items-center space-x-1 bg-green-50 px-2 py-1 rounded-lg">
-                <span className="text-base">🚿</span>
-                <span className="font-semibold text-green-700">{property.bathrooms}</span>
+              <div className="flex items-center space-x-1 bg-green-50 px-2 py-1 rounded-lg border border-green-200">
+                <Bath className="h-4 w-4" />
+                <span>{property.bathrooms}</span>
               </div>
             )}
             {property.garage && (
-              <div className="flex items-center space-x-1 bg-purple-50 px-2 py-1 rounded-lg">
-                <span className="text-base">🚗</span>
-                <span className="font-semibold text-purple-700">Sí</span>
+              <div className="flex items-center space-x-1 bg-purple-50 px-2 py-1 rounded-lg border border-purple-200">
+                <Car className="h-4 w-4" />
+                <span>{property.garage ? "Sí" : "No"}</span>
               </div>
             )}
           </div>
-          <div className="flex items-center space-x-1 bg-orange-50 px-2 py-1 rounded-lg">
-            <span className="text-base">📐</span>
-            <span className="font-semibold text-orange-700">{property.area} m²</span>
+          <div className="flex items-center space-x-1 bg-orange-50 px-2 py-1 rounded-lg border border-orange-200">
+            <Maximize className="h-4 w-4" />
+            <span>{property.area} m²</span>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+        <div className="flex items-center justify-between pt-3 border-t border-border">
           <div className="flex items-center space-x-1">
-            <Badge variant="outline" className="text-xs font-semibold bg-gray-50 text-gray-700 border-gray-300">
-              🏷️ {property.type}
+            <Badge variant="outline" className="text-xs font-semibold bg-gray-50 text-gray-600 border-gray-300">
+              {property.type}
             </Badge>
-            <Badge variant="outline" className="text-xs font-semibold bg-indigo-50 text-indigo-700 border-indigo-300">
-              ⭐ Estrato {property.stratum}
+            <Badge variant="outline" className="text-xs font-semibold bg-indigo-50 text-indigo-600 border-indigo-300">
+              Estrato {property.stratum}
             </Badge>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onView(property)}
-              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg p-2"
+              className="text-muted-foreground hover:text-accent"
             >
               <Eye className="h-4 w-4" />
             </Button>
@@ -140,7 +135,7 @@ const PropertyCard = ({ property, onView, onEdit, onDelete }) => {
               variant="ghost"
               size="sm"
               onClick={() => onEdit(property)}
-              className="text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg p-2"
+              className="text-muted-foreground hover:text-secondary"
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -148,7 +143,7 @@ const PropertyCard = ({ property, onView, onEdit, onDelete }) => {
               variant="ghost"
               size="sm"
               onClick={() => onDelete(property)}
-              className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg p-2"
+              className="text-muted-foreground hover:text-destructive"
             >
               <Trash2 className="h-4 w-4" />
             </Button>

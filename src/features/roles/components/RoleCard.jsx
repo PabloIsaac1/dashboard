@@ -29,20 +29,20 @@ const RoleCard = ({ role, onEdit, onDelete, canEdit = true, canDelete = true }) 
   const isSystemRole = role.name === "Administrador"
 
   return (
-    <Card className="group hover:shadow-2xl hover:scale-105 transition-all duration-300 animate-fade-in bg-white border-0 shadow-lg">
+    <Card className="group hover:shadow-2xl hover:scale-105 transition-all duration-300 animate-fade-in bg-white border border-gray-200 shadow-lg">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
             <div
-              className={`p-3 rounded-xl ${isSystemRole ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white" : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-600"}`}
+              className={`p-3 rounded-xl border ${isSystemRole ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-blue-300" : "bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 border-gray-300"}`}
             >
-              <span className="text-2xl">{isSystemRole ? "🛡️" : "👤"}</span>
+              <Shield className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle className="text-lg font-bold text-gray-800">{role.name}</CardTitle>
+              <CardTitle className="text-lg font-bold text-gray-700">{role.name}</CardTitle>
               {isSystemRole && (
-                <Badge variant="secondary" className="text-xs mt-1 bg-blue-100 text-blue-800 font-semibold">
-                  🔒 Rol del Sistema
+                <Badge variant="secondary" className="text-xs mt-1 bg-blue-50 text-blue-700 font-semibold border border-blue-200">
+                  Rol del Sistema
                 </Badge>
               )}
             </div>
@@ -54,7 +54,7 @@ const RoleCard = ({ role, onEdit, onDelete, canEdit = true, canDelete = true }) 
                 variant="ghost"
                 size="sm"
                 onClick={() => onEdit(role)}
-                className="text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg p-2"
+                className="text-muted-foreground hover:text-secondary"
                 disabled={isSystemRole}
               >
                 <Edit className="h-4 w-4" />
@@ -65,7 +65,7 @@ const RoleCard = ({ role, onEdit, onDelete, canEdit = true, canDelete = true }) 
                 variant="ghost"
                 size="sm"
                 onClick={() => onDelete(role)}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg p-2"
+                className="text-muted-foreground hover:text-destructive"
                 disabled={isSystemRole}
               >
                 <Trash2 className="h-4 w-4" />
@@ -77,51 +77,43 @@ const RoleCard = ({ role, onEdit, onDelete, canEdit = true, canDelete = true }) 
 
       <CardContent className="space-y-4">
         {/* Description */}
-        {role.description && (
-          <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">{role.description}</p>
-        )}
-
+        {role.description && <p className="text-sm text-muted-foreground line-clamp-2">{role.description}</p>}
+          <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed">{role.description}</p>
         {/* Permission Summary */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              🔐 Permisos
-            </span>
-            <Badge variant="outline" className="text-xs font-semibold bg-indigo-50 text-indigo-700 border-indigo-300">
-              📊 {getPermissionCount()} total
+            <span className="text-sm font-semibold text-gray-600 flex items-center gap-2">
+            <Badge variant="outline" className="text-xs font-semibold bg-indigo-50 text-indigo-600 border-indigo-300">
+              {getPermissionCount()} total
             </Badge>
+            </span>
           </div>
 
           <div className="space-y-2">
             {getPermissionSummary().map(({ section, count }) => (
-              <div key={section} className="flex items-center justify-between text-sm bg-gray-50 p-2 rounded-lg">
-                <span className="capitalize text-gray-700 font-medium flex items-center gap-2">
-                  {section === 'properties' && '🏠'}
-                  {section === 'appointments' && '📅'}
-                  {section === 'clients' && '👥'}
-                  {section === 'reports' && '📊'}
-                  {section === 'settings' && '⚙️'}
-                  {section}
+              <div key={section} className="flex items-center justify-between text-sm bg-gray-50/70 p-3 rounded-lg border border-gray-200">
+                <span className="capitalize text-gray-600 font-medium flex items-center gap-2">
+                {section}
                 </span>
-                <Badge variant="secondary" className="text-xs font-semibold bg-blue-100 text-blue-700">
-                  ✅ {count} permisos
+                <Badge variant="secondary" className="text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-200">
+                  {count} permisos
                 </Badge>
               </div>
             ))}
             {Object.keys(role.permissions).length > 3 && (
-              <div className="text-xs text-gray-500 text-center pt-1 font-medium">
-                ➕ {Object.keys(role.permissions).length - 3} secciones más
+              <div className="text-xs text-gray-400 text-center pt-1 font-medium">
+                +{Object.keys(role.permissions).length - 3} secciones más
               </div>
             )}
           </div>
         </div>
 
         {/* Metadata */}
-        <div className="pt-3 border-t border-gray-200">
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span className="flex items-center gap-1">📅 {new Date(role.createdAt).toLocaleDateString("es-ES")}</span>
+        <div className="pt-3 border-t border-border">
+          <div className="flex items-center justify-between text-xs text-gray-400">
+            <span>Creado: {new Date(role.createdAt).toLocaleDateString("es-ES")}</span>
             {role.updatedAt && role.updatedAt !== role.createdAt && (
-              <span className="flex items-center gap-1">🔄 {new Date(role.updatedAt).toLocaleDateString("es-ES")}</span>
+              <span>Actualizado: {new Date(role.updatedAt).toLocaleDateString("es-ES")}</span>
             )}
           </div>
         </div>
